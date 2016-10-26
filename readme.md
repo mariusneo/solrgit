@@ -3,7 +3,7 @@ lucene-solr git commits project
 
 Simple project used to push the commit data taken from lucene-solr GIT
 repository and push it towards a solr server.
-This simple project is actually used only to collect training data for an
+This simple project is actually used only to collect test data for an
 experiment with the Solr JDBC driver used via Apache Zeppelin. 
 
 For the purpose of this test the software packages :
@@ -16,6 +16,31 @@ were used.
 Once the data is posted and commited to the solrgit collection, it can
 be analyzed via a Zeppelin notebook.
 
+Below is presented a sample of one of the  documents from _solrgit_ collection:
+
+```
+{
+        "id":"1b7a88f61ea44ecc873d7c7d135ce5c6ab88bb0a",
+        "ticket":"LUCENE-7491",
+        "message":"LUCENE-7491: fix merge exception if the same field has points in some segments but not in others\n",
+        "commit_date":"2016-10-12T13:00:26Z",
+        "commit_day":"2016-10-12T00:00:00Z",
+        "commit_month":"2016-10-01T00:00:00Z",
+        "commit_year":2016,
+        "commiter_name":"Mike McCandless",
+        "commiter_email":"mikemccand@apache.org",
+        "author_name":"Mike McCandless",
+        "author_email":"mikemccand@apache.org",
+        "parents_ids":["6512d0c62024177cc5d6c8b7086faaa149565dfb"],
+        "parents_count":1,
+        "modified_files":["lucene/CHANGES.txt",
+          "lucene/core/src/java/org/apache/lucene/codecs/PointsWriter.java",
+          "lucene/core/src/java/org/apache/lucene/codecs/lucene60/Lucene60PointsWriter.java",
+          "lucene/core/src/java/org/apache/lucene/index/FieldInfo.java",
+          "lucene/test-framework/src/java/org/apache/lucene/index/BasePointsFormatTestCase.java"],
+        "_version_":1549281927517700096
+}
+```
 
 Below is presented a glimpse on the type of queries that can be done via Zeppelin
 
