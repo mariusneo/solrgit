@@ -98,3 +98,52 @@ Zeppelin offers also the possibility to perform [Spark](http://spark.apache.org/
 on Solr via [spark-sql](http://spark.apache.org/) driver, but at the time of writing this
 sample code, the spark-sql driver was causing issues because its current version (2.2.1) is compiled
 with scala 2.10, but zeppelin on the other hand is compiled with scala 2.11
+
+
+## Spark-Shell & Spark-Solr
+
+The scripts that would have been included in the notebook to be executed via Zeppelin can be seen below.
+By using Spark-Solr there can achieved more detailed analysis which are not available via solr jdbc queries.
+One example in this direction would be analysis performed on multi-valued fields (e.g.: file containing most modifications).
+
+
+In order to work with spark-solr within the spark-shell use the following command:
+
+```
+➜  spark-1.6.2-bin-hadoop2.6 bin/spark-shell --packages "com.lucidworks.spark:spark-solr:2.2.1
+```
+
+Note below the attribute `flatten_multivalued` which is used to tell spark not to flatten the multi-valued
+fields retrieved from solr.
+
+```
+val options = Map("collection" -> "solrgit", "zkhost" -> "127.0.0.1:9983", "flatten_multivalued" -> "false")
+val df = sqlContext.read.format("solr").options(options).load
+```
+
+
+### Tickets with the most commits
+
+```
+df.filter($"ticket".isNotNull)
+  .groupBy("ticket").count()
+  .sort(desc("count")).show
+```
+
+```
+Array([LUCENE-3930,100], [LUCENE-3490,98], [LUCENE-2621,97], [LUCENE-3305,97], [LUCENE-5969,87], [LUCENE-3892,79], [LUCENE-4055,77], [LUCENE-4956,76], [LUCENE-2858,73], [SOLR-8029,71])
+```
+
+
+### Files containing the most changes
+
+```
+df.select("modified_files")
+  .withColumn("modified_file", explode($"modified_files")).select("modified_file")
+  .groupBy("modified_file").count()
+  .sort(desc("count")).take(10)
+```
+
+```
+Array([solr/CHANGES.txt,7045], [lucene/CHANGES.txt,4717], [CHANGES.txt,1918], [lucene/common-build.xml,843], [build.xml,777], [solr/core/src/java/org/apache/solr/cloud/ZkController.java,604], [lucene/core/src/java/org/apache/lucene/index/IndexWriter.java,599], [solr/build.xml,586], [lucene/build.xml,479], [lucene/test-framework/src/java/org/apache/lucene/util/LuceneTestCase.java,472])
+```
